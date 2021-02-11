@@ -3,6 +3,7 @@ package com.javi.ShopService.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "products")
@@ -17,4 +18,6 @@ public class ProductEntity {
     private String description;
     @Column
     private String sku;
+    @Column
+    private BigDecimal price;
 }

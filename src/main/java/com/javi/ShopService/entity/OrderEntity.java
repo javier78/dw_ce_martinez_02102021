@@ -4,7 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "orders")
@@ -24,5 +24,5 @@ public class OrderEntity {
     private BigDecimal total;
 
     @Column(columnDefinition = "created_at")
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 }

@@ -1,6 +1,7 @@
 package com.javi.ShopService.controller;
 
 import com.javi.ShopService.dto.CreateCustomerRequestDto;
+import com.javi.ShopService.dto.CreateOrderRequestDto;
 import com.javi.ShopService.dto.CustomerDto;
 import com.javi.ShopService.dto.OrderDto;
 import com.javi.ShopService.entity.CustomerEntity;
@@ -37,7 +38,7 @@ public class CustomerController {
     }
 
     @PostMapping(path = "{id}/orders")
-    public ResponseEntity<OrderDto> createOrderForGivenCustomer(@PathVariable(name = "id") Integer customerId, @RequestBody String sku) {
+    public ResponseEntity<OrderDto> createOrderForGivenCustomer(@PathVariable(name = "id") Integer customerId, @RequestBody CreateOrderRequestDto sku) {
         OrderEntity entity = customerService.createOrderForCustomer(customerId, sku);
 
         return ResponseEntity.ok(convertOrderEntityToDto(entity));
