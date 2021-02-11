@@ -46,9 +46,12 @@ public class CustomerService implements ICustomerService {
     }
 
     @Override
-    public OrderEntity createOrderForCustomer(Integer customerId, CreateOrderRequestDto skuDto) {
+    public OrderEntity createOrderForCustomer(Integer customerId, CreateOrderRequestDto skuDto) throws Exception {
         OrderEntity orderEntity = new OrderEntity();
         ProductEntity productEntity = productRepository.findBySku(skuDto.getSku());
+        if (productEntity == null) {
+            throw new Exception("SKU not found!");
+        }
         orderEntity.setCustomerId(customerId);
         orderEntity.setSku(skuDto.getSku());
         orderEntity.setCreatedAt(LocalDateTime.now());

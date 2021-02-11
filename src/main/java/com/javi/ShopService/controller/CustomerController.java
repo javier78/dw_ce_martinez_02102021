@@ -1,9 +1,6 @@
 package com.javi.ShopService.controller;
 
-import com.javi.ShopService.dto.CreateCustomerRequestDto;
-import com.javi.ShopService.dto.CreateOrderRequestDto;
-import com.javi.ShopService.dto.CustomerDto;
-import com.javi.ShopService.dto.OrderDto;
+import com.javi.ShopService.dto.*;
 import com.javi.ShopService.entity.CustomerEntity;
 import com.javi.ShopService.entity.OrderEntity;
 import com.javi.ShopService.service.ICustomerService;
@@ -38,10 +35,13 @@ public class CustomerController {
     }
 
     @PostMapping(path = "{id}/orders")
-    public ResponseEntity<OrderDto> createOrderForGivenCustomer(@PathVariable(name = "id") Integer customerId, @RequestBody CreateOrderRequestDto sku) {
-        OrderEntity entity = customerService.createOrderForCustomer(customerId, sku);
-
-        return ResponseEntity.ok(convertOrderEntityToDto(entity));
+    public ResponseEntity<?> createOrderForGivenCustomer(@PathVariable(name = "id") Integer customerId, @RequestBody CreateOrderRequestDto sku) {
+        try {
+            OrderEntity entity = customerService.createOrderForCustomer(customerId, sku);
+            return ResponseEntity.ok(convertOrderEntityToDto(entity));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ErrorDto(e.getMessage()));
+        }
     }
 
     @PostMapping(path = "{id}/notifications")

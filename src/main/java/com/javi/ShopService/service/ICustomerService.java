@@ -12,5 +12,5 @@ import java.util.List;
 public interface ICustomerService {
     CustomerEntity createCustomer(CreateCustomerRequestDto dto);
     List<OrderEntity> getCustomerOrders(Integer customerId);
-    OrderEntity createOrderForCustomer(Integer customerId, CreateOrderRequestDto sku);
+    OrderEntity createOrderForCustomer(Integer customerId, CreateOrderRequestDto sku) throws Exception;
 }
