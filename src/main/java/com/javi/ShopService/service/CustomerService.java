@@ -31,8 +31,11 @@ public class CustomerService implements ICustomerService {
     ModelMapper modelMapper;
 
     @Override
-    public CustomerEntity createCustomer(CreateCustomerRequestDto dto) {
+    public CustomerEntity createCustomer(CreateCustomerRequestDto dto) throws Exception {
         CustomerEntity entity = new CustomerEntity();
+        if (dto.getEmail() == null || dto.getName() == null) {
+            throw new Exception("A name and an email needs to be specified");
+        }
         entity.setEmail(dto.getEmail());
         entity.setName(dto.getName());
         customerRepository.save(entity);
@@ -40,7 +43,10 @@ public class CustomerService implements ICustomerService {
     }
 
     @Override
-    public List<OrderEntity> getCustomerOrders(Integer customerId) {
+    public List<OrderEntity> getCustomerOrders(Integer customerId) throws Exception {
+        if(customerId < 1) {
+            throw new Exception("Invalid customer ID!");
+        }
         List<OrderEntity> orders = orderRepository.findByCustomerId(customerId);
         return orders;
     }
@@ -51,6 +57,9 @@ public class CustomerService implements ICustomerService {
         ProductEntity productEntity = productRepository.findBySku(skuDto.getSku());
         if (productEntity == null) {
             throw new Exception("SKU not found!");
+        }
+        if(customerId < 1) {
+            throw new Exception("Invalid customer ID!");
         }
         orderEntity.setCustomerId(customerId);
         orderEntity.setSku(skuDto.getSku());

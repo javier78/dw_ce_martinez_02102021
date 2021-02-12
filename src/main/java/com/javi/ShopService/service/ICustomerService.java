@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 public interface ICustomerService {
-    CustomerEntity createCustomer(CreateCustomerRequestDto dto);
-    List<OrderEntity> getCustomerOrders(Integer customerId);
+    CustomerEntity createCustomer(CreateCustomerRequestDto dto) throws Exception;
+    List<OrderEntity> getCustomerOrders(Integer customerId) throws Exception;
     OrderEntity createOrderForCustomer(Integer customerId, CreateOrderRequestDto sku) throws Exception;
 }

@@ -22,16 +22,23 @@ public class CustomerController {
     private ModelMapper modelMapper;
 
     @PostMapping
-    public ResponseEntity<CustomerDto> createCustomer(@RequestBody CreateCustomerRequestDto body) {
-        CustomerDto dto = convertCustomerEntityToDto(customerService.createCustomer(body));
-        return ResponseEntity.ok(dto);
+    public ResponseEntity<?> createCustomer(@RequestBody CreateCustomerRequestDto body) {
+        try {
+            CustomerDto dto = convertCustomerEntityToDto(customerService.createCustomer(body));
+            return ResponseEntity.ok(dto);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ErrorDto(e.getMessage()));
+        }
     }
 
     @GetMapping(path = "{id}/orders")
-    public ResponseEntity<List<OrderDto>> getOrdersForCustomer(@PathVariable(name = "id") Integer customerId) {
-        List<OrderEntity> orderEntities = customerService.getCustomerOrders(customerId);
-
-        return ResponseEntity.ok(orderEntities.stream().map(this::convertOrderEntityToDto).collect(Collectors.toList()));
+    public ResponseEntity<?> getOrdersForCustomer(@PathVariable(name = "id") Integer customerId) {
+        try {
+            List<OrderEntity> orderEntities = customerService.getCustomerOrders(customerId);
+            return ResponseEntity.ok(orderEntities.stream().map(this::convertOrderEntityToDto).collect(Collectors.toList()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ErrorDto(e.getMessage()));
+        }
     }
 
     @PostMapping(path = "{id}/orders")
@@ -42,11 +49,6 @@ public class CustomerController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new ErrorDto(e.getMessage()));
         }
-    }
-
-    @PostMapping(path = "{id}/notifications")
-    public ResponseEntity<?> createNotificationForProductAndCustomer(@PathVariable(name = "id") Integer customerId) {
-        return null;
     }
 
     private CustomerDto convertCustomerEntityToDto(CustomerEntity entity) {
