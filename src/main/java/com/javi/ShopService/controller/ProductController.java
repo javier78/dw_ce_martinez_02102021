@@ -1,8 +1,6 @@
 package com.javi.ShopService.controller;
 
-import com.javi.ShopService.dto.OrderDto;
 import com.javi.ShopService.dto.ProductDto;
-import com.javi.ShopService.entity.OrderEntity;
 import com.javi.ShopService.entity.ProductEntity;
 import com.javi.ShopService.service.IProductService;
 import org.modelmapper.ModelMapper;
