@@ -1,5 +1,6 @@
 package com.javi.ShopService.controller;
 
+import com.javi.ShopService.dto.ErrorDto;
 import com.javi.ShopService.dto.ProductDto;
 import com.javi.ShopService.entity.ProductEntity;
 import com.javi.ShopService.service.IProductService;
@@ -22,9 +23,13 @@ public class ProductController {
     private ModelMapper modelMapper;
 
     @GetMapping
-    public ResponseEntity<List<ProductDto>> getProducts() {
-        List<ProductEntity> productEntities = productService.getAllProducts();
-        return ResponseEntity.ok(productEntities.stream().map(this::convertProductEntityToDto).collect(Collectors.toList()));
+    public ResponseEntity<?> getProducts() {
+        try {
+            List<ProductEntity> productEntities = productService.getAllProducts();
+            return ResponseEntity.ok(productEntities.stream().map(this::convertProductEntityToDto).collect(Collectors.toList()));
+        } catch(Exception e) {
+            return ResponseEntity.status(500).body(new ErrorDto(e.getMessage()));
+        }
     }
 
     private ProductDto convertProductEntityToDto(ProductEntity entity) {

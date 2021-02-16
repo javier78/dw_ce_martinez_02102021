@@ -1,6 +1,7 @@
 package com.javi.ShopService.controller;
 
 import com.javi.ShopService.dto.CreateCustomerRequestDto;
+import com.javi.ShopService.dto.CreateOrderRequestDto;
 import com.javi.ShopService.dto.CustomerDto;
 import com.javi.ShopService.dto.OrderDto;
 import com.javi.ShopService.entity.CustomerEntity;
@@ -97,6 +98,22 @@ public class CustomerControllerTest {
         //Init
         Integer customerId = 1;
 
+        //Mock
+        Mockito.when(mockCustomerService.getCustomerOrders(customerId)).thenThrow(new Exception());
+
+        //Test
+        ResponseEntity<?> response = customerController.getOrdersForCustomer(customerId);
+        Assertions.assertNotNull(response);
+        Assertions.assertEquals(500, response.getStatusCode().value());
+    }
+
+    @Test
+    public void happyPathCreateOrderForCustomer() throws Exception {
+        //Init
+        Integer customerId = 1;
+        CreateOrderRequestDto orderRequestDto = new CreateOrderRequestDto();
+        orderRequestDto.setSku("123456");
+
         OrderEntity orderEntity = new OrderEntity();
         orderEntity.setId(1);
         orderEntity.setCustomerId(1);
@@ -104,15 +121,29 @@ public class CustomerControllerTest {
         OrderDto orderDto = new OrderDto();
         orderDto.setId(1);
 
-        List<OrderEntity> orderEntities = new ArrayList<>();
-        orderEntities.add(orderEntity);
-
         //Mock
-        Mockito.when(mockCustomerService.getCustomerOrders(customerId)).thenThrow(new Exception());
+        Mockito.when(mockCustomerService.createOrderForCustomer(customerId, orderRequestDto)).thenReturn(orderEntity);
+        Mockito.when(mockModelMapper.map(orderEntity, OrderDto.class)).thenReturn(orderDto);
 
         //Test
-        ResponseEntity<?> response = customerController.getOrdersForCustomer(customerId);
+        ResponseEntity<?> response = customerController.createOrderForGivenCustomer(customerId, orderRequestDto);
         Assertions.assertNotNull(response);
         Assertions.assertEquals(200, response.getStatusCode().value());
+    }
+
+    @Test
+    public void sadPathCreateOrderForCustomer() throws Exception {
+        //Init
+        Integer customerId = 1;
+        CreateOrderRequestDto orderRequestDto = new CreateOrderRequestDto();
+        orderRequestDto.setSku("123456");
+
+        //Mock
+        Mockito.when(mockCustomerService.createOrderForCustomer(customerId, orderRequestDto)).thenThrow(new Exception());
+
+        //Test
+        ResponseEntity<?> response = customerController.createOrderForGivenCustomer(customerId, orderRequestDto);
+        Assertions.assertNotNull(response);
+        Assertions.assertEquals(500, response.getStatusCode().value());
     }
 }
