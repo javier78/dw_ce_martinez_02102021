@@ -2,6 +2,7 @@ package com.javi.ShopService.service;
 
 import com.javi.ShopService.dto.CreateCustomerRequestDto;
 import com.javi.ShopService.entity.CustomerEntity;
+import com.javi.ShopService.entity.OrderEntity;
 import com.javi.ShopService.repository.CustomerRepository;
 import com.javi.ShopService.repository.OrderRepository;
 import com.javi.ShopService.repository.ProductRepository;
@@ -16,6 +17,8 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -61,6 +64,10 @@ public class CustomerServiceTest {
 
     }
 
+    /**
+     * Sad path test for customer creation
+     * Verifies that an exception is thrown when a customer name is not specified
+     */
     @Test
     public void sadPathCreateCustomerNoName() {
         CreateCustomerRequestDto requestDto = new CreateCustomerRequestDto();
@@ -70,6 +77,9 @@ public class CustomerServiceTest {
         });
     }
 
+    /**
+     *
+     */
     @Test
     public void sadPathCreateCustomerNoEmail() {
         CreateCustomerRequestDto requestDto = new CreateCustomerRequestDto();
@@ -81,6 +91,26 @@ public class CustomerServiceTest {
     }
 
     @Test
-    public void
+    public void sadPathCreateCustomerNoInformation() {
+        CreateCustomerRequestDto requestDto = new CreateCustomerRequestDto();
+        assertThrows(Exception.class, () -> {
+            customerService.createCustomer(requestDto);
+        });
+    }
+
+    /**
+     * Happy path test for retrieving customer orders
+     * Should return an empty list since the customer should not have any orders
+     */
+    @Test
+    public void happyPathGetCustomerOrders() {
+        Integer customerId = 1;
+        try {
+            List<OrderEntity> orders = customerService.getCustomerOrders(customerId);
+            assertEquals(0, orders.size());
+        } catch (Exception e) {
+            throw new AssertionError("Exception failed: " + e.getMessage());
+        }
+    }
 
 }
