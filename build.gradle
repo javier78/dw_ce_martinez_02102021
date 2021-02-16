@@ -23,7 +23,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'com.h2database:h2'
-	implementation 'junit:junit:4.12'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.1'
+	testCompile('org.junit.jupiter:junit-jupiter-params:5.2.0')
+	testCompile('org.mockito:mockito-junit-jupiter:2.18.3')
 	testImplementation 'org.mockito:mockito-core:3.7.7'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
