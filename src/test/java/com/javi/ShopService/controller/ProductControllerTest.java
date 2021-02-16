@@ -8,7 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
@@ -17,8 +16,6 @@ import java.util.ArrayList;
 public class ProductControllerTest {
     @Mock
     private ProductService mockProductService;
-    @Mock
-    private ModelMapper mockModelMapper;
 
     @InjectMocks
     private ProductController productController;
