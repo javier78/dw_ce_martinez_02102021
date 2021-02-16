@@ -24,12 +24,8 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<?> getProducts() {
-        try {
-            List<ProductEntity> productEntities = productService.getAllProducts();
-            return ResponseEntity.ok(productEntities.stream().map(this::convertProductEntityToDto).collect(Collectors.toList()));
-        } catch(Exception e) {
-            return ResponseEntity.status(500).body(new ErrorDto(e.getMessage()));
-        }
+        List<ProductEntity> productEntities = productService.getAllProducts();
+        return ResponseEntity.ok(productEntities.stream().map(this::convertProductEntityToDto).collect(Collectors.toList()));
     }
 
     private ProductDto convertProductEntityToDto(ProductEntity entity) {
