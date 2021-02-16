@@ -1,22 +1,19 @@
 package com.javi.ShopService.service;
 
 import com.javi.ShopService.dto.CreateCustomerRequestDto;
+import com.javi.ShopService.dto.CreateOrderRequestDto;
 import com.javi.ShopService.entity.CustomerEntity;
 import com.javi.ShopService.entity.OrderEntity;
+import com.javi.ShopService.entity.ProductEntity;
 import com.javi.ShopService.repository.CustomerRepository;
 import com.javi.ShopService.repository.OrderRepository;
 import com.javi.ShopService.repository.ProductRepository;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -28,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 public class CustomerServiceTest {
 
-    @Spy
+    @Mock
     private CustomerRepository mockCustomerRepository;
 
     @Mock
@@ -39,11 +36,6 @@ public class CustomerServiceTest {
 
     @InjectMocks
     private CustomerService customerService;
-
-    @BeforeEach
-    private void before() {
-
-    }
 
     /**
      * Happy path test for customer creation.
@@ -124,6 +116,7 @@ public class CustomerServiceTest {
      */
     @Test
     public void happyPathGetCustomerOrdersWithOneOrder() {
+        //Init
         List<OrderEntity> orders = new ArrayList<>();
         OrderEntity orderEntity = new OrderEntity();
         orderEntity.setCustomerId(1);
@@ -132,9 +125,10 @@ public class CustomerServiceTest {
         orderEntity.setCreatedAt(LocalDateTime.now());
         orderEntity.setTotal(BigDecimal.valueOf(300.00));
         orders.add(orderEntity);
-        Mockito.when(mockOrderRepository.findByCustomerId(Mockito.anyInt())).thenReturn(orders);
         Integer customerId = 1;
-
+        //When
+        Mockito.when(mockOrderRepository.findByCustomerId(Mockito.anyInt())).thenReturn(orders);
+        //Test
         try {
             List<OrderEntity> orderEntities = customerService.getCustomerOrders(customerId);
             assertEquals(1, orderEntities.size());
@@ -151,6 +145,7 @@ public class CustomerServiceTest {
      */
     @Test
     public void happyPathGetCustomerOrdersWithManyOrders() {
+        //Init
         List<OrderEntity> orders = new ArrayList<>();
         OrderEntity orderEntityOne = new OrderEntity();
         orderEntityOne.setCustomerId(1);
@@ -168,9 +163,12 @@ public class CustomerServiceTest {
         orderEntityTwo.setTotal(BigDecimal.valueOf(499.99));
         orders.add(orderEntityTwo);
 
-        Mockito.when(mockOrderRepository.findByCustomerId(Mockito.anyInt())).thenReturn(orders);
         Integer customerId = 1;
 
+        //When
+        Mockito.when(mockOrderRepository.findByCustomerId(Mockito.anyInt())).thenReturn(orders);
+
+        //Test
         try {
             List<OrderEntity> orderEntities = customerService.getCustomerOrders(customerId);
             assertEquals(2, orderEntities.size());
@@ -201,6 +199,82 @@ public class CustomerServiceTest {
         assertThrows(Exception.class, () -> customerService.getCustomerOrders(customerId));
     }
 
-    
+    @Test
+    public void happyPathCreateOrderForCustomer() {
+        //Init
+        Integer customerId = 1;
+        CreateOrderRequestDto skuRequestDto = new CreateOrderRequestDto();
+        skuRequestDto.setSku("123456");
 
+        ProductEntity productEntity = new ProductEntity();
+        productEntity.setId(1);
+        productEntity.setName("Nintendo Switch");
+        productEntity.setSku("123456");
+        productEntity.setPrice(BigDecimal.valueOf(300.00));
+        productEntity.setDescription("It's a Nintendo Switch!");
+        //When
+        Mockito.when(mockProductRepository.findBySku(Mockito.any(String.class))).thenReturn(productEntity);
+
+        //Test
+        try {
+            OrderEntity testResult = customerService.createOrderForCustomer(customerId, skuRequestDto);
+            assertNotNull(testResult);
+            assertEquals(skuRequestDto.getSku(), testResult.getSku());
+            assertEquals(customerId, testResult.getCustomerId());
+        } catch (Exception e) {
+            throw new AssertionError("Exception caught: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void sadPathCreateOrderForCustomerInvalidSku() {
+        //Init
+        Integer customerId = 1;
+        CreateOrderRequestDto dto = new CreateOrderRequestDto();
+        dto.setSku("invalid_sku");
+        //Mock
+        Mockito.when(mockProductRepository.findBySku(Mockito.any(String.class))).thenReturn(null);
+        //Test
+        assertThrows(Exception.class, () -> customerService.createOrderForCustomer(customerId, dto));
+    }
+
+    @Test
+    public void sadPathCreateOrderForCustomerInvalidCustomerId() {
+        //Init
+        Integer customerId = 0;
+        CreateOrderRequestDto dto = new CreateOrderRequestDto();
+        dto.setSku("123456");
+
+        ProductEntity productEntity = new ProductEntity();
+        productEntity.setId(1);
+        productEntity.setName("Nintendo Switch");
+        productEntity.setSku("123456");
+        productEntity.setPrice(BigDecimal.valueOf(300.00));
+        productEntity.setDescription("It's a Nintendo Switch!");
+        //Mock
+        Mockito.when(mockProductRepository.findBySku(Mockito.any(String.class))).thenReturn(productEntity);
+
+        //Test
+        assertThrows(Exception.class, () -> customerService.createOrderForCustomer(customerId, dto));
+    }
+
+    @Test
+    public void sadPathCreateOrderForCustomerNegativeCustomerId() {
+        //Init
+        Integer customerId = -1;
+        CreateOrderRequestDto dto = new CreateOrderRequestDto();
+        dto.setSku("123456");
+
+        ProductEntity productEntity = new ProductEntity();
+        productEntity.setId(1);
+        productEntity.setName("Nintendo Switch");
+        productEntity.setSku("123456");
+        productEntity.setPrice(BigDecimal.valueOf(300.00));
+        productEntity.setDescription("It's a Nintendo Switch!");
+        //Mock
+        Mockito.when(mockProductRepository.findBySku(Mockito.any(String.class))).thenReturn(productEntity);
+
+        //Test
+        assertThrows(Exception.class, () -> customerService.createOrderForCustomer(customerId, dto));
+    }
 }

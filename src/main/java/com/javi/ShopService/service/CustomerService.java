@@ -8,7 +8,6 @@ import com.javi.ShopService.entity.ProductEntity;
 import com.javi.ShopService.repository.CustomerRepository;
 import com.javi.ShopService.repository.OrderRepository;
 import com.javi.ShopService.repository.ProductRepository;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,9 +25,6 @@ public class CustomerService implements ICustomerService {
 
     @Autowired
     ProductRepository productRepository;
-
-    @Autowired
-    ModelMapper modelMapper;
 
     @Override
     public CustomerEntity createCustomer(CreateCustomerRequestDto dto) throws Exception {
